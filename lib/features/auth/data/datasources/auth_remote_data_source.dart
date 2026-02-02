@@ -10,6 +10,7 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
   Future<UserModel> signIn({required String email, required String password});
+  Future<void> resetPassword({required String email});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -82,6 +83,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       rethrow;
     } catch (_) {
       throw Exception("Une erreur inconnue est survenue");
+    }
+  }
+
+  @override
+  Future<void> resetPassword({required String email}) async {
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException {
+      rethrow;
+    } catch (_) {
+      throw Exception("erreur lors de l'envoie de l'email");
     }
   }
 }

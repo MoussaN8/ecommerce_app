@@ -46,6 +46,7 @@ class _SignUpState extends State<SignUp> {
                 showSnackBar(context, state.message);
               }
               if (state is AuthSuccess) {
+                showSnackBar(context, "Compte créé avec succés !");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   AppRoutes.shop,

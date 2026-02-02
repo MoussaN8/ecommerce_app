@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/features/auth/presentation/pages/emailSend.dart';
 import 'package:ecommerce_app/features/auth/presentation/pages/reset_password.dart';
 import 'package:ecommerce_app/features/auth/presentation/pages/sign_in.dart';
 import 'package:ecommerce_app/features/auth/presentation/pages/sign_up.dart';
@@ -9,13 +10,13 @@ class AppRoutes {
   static const String signUp = "/signUp";
   static const String resetPassword = '/resetPassword';
   static const String shop = '/shop';
-  
+  static const String emailSend = '/emailSend';
 
   static Map<String, WidgetBuilder> routes = {
     signIn: (context) => const SignIn(),
     signUp: (context) => const SignUp(),
     resetPassword: (context) => const ResetPassword(),
     shop: (context) => const Shopp(),
-
+    
   };
 }

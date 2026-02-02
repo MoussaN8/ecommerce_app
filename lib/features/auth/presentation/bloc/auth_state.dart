@@ -24,3 +24,5 @@ final class AuthFailure extends AuthState {
   @override
   List<Object> get props => [message];
 }
+
+final class AuthResetpasswordSuccess extends AuthState{}
