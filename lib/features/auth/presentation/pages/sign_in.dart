@@ -1,8 +1,12 @@
 import 'package:ecommerce_app/core/routes/app_routes.dart';
 import 'package:ecommerce_app/core/theme/app_palette.dart';
+import 'package:ecommerce_app/core/utils/loader.dart';
+import 'package:ecommerce_app/core/utils/show_snackbar.dart';
+import 'package:ecommerce_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ecommerce_app/features/auth/presentation/widgets/auth_button.dart';
 import 'package:ecommerce_app/features/auth/presentation/widgets/auth_form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -31,62 +35,99 @@ class _SignInState extends State<SignIn> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Se Connecter",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
-                ),
-                const SizedBox(height: 20),
-                AuthForm(hintText: "Email", controller: _emailController),
-                const SizedBox(height: 20),
-                AuthForm(
-                  hintText: "Mot de passe",
-                  controller: _passwordController,
-                  obscureText: isPasswordHidden,
-                  onToggleVisibility: () {
-                    setState(() {
-                      isPasswordHidden = !isPasswordHidden;
-                    });
-                  },
-                ),
-                const SizedBox(height: 20),
-                AuthButton(textButton: "Se connecter", onPressed: () {}),
-                const SizedBox(height: 20),
-                InkWell(
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.signUp),
-                  child: RichText(
-                    text: TextSpan(
-                      text: "Vous n'avez pas de compte ? ",
-                      style: const TextStyle(color: Colors.black),
-                      children: [
-                        TextSpan(
-                          text: "S'inscrire",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                InkWell(
-                  onTap: () =>
-                      Navigator.pushNamed(context, AppRoutes.resetPassword),
-                  child: RichText(
-                    text: TextSpan(
-                      text: "Mot de passe oubliée ?",
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthFailure) {
+                showSnackBar(context, state.message);
+              }
+              if (state is AuthSuccess) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  AppRoutes.shop,
+                  (route) => false,
+                );
+              }
+            },
+            builder: (context, state) {
+              if (state is AuthLoading) {
+                return const Loader();
+              }
+              return Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Se Connecter",
                       style: TextStyle(
-                        color: AppPalette.primaryColor,
                         fontWeight: FontWeight.bold,
+                        fontSize: 32,
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                    AuthForm(hintText: "Email", controller: _emailController),
+                    const SizedBox(height: 20),
+                    AuthForm(
+                      hintText: "Mot de passe",
+                      controller: _passwordController,
+                      obscureText: isPasswordHidden,
+                      onToggleVisibility: () {
+                        setState(() {
+                          isPasswordHidden = !isPasswordHidden;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    AuthButton(
+                      textButton: "Se connecter",
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          context.read<AuthBloc>().add(
+                            AuthSignInEvent(
+                              email: _emailController.text.trim(),
+                              password: _passwordController.text.trim(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    InkWell(
+                      onTap: () =>
+                          Navigator.pushNamed(context, AppRoutes.signUp),
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Vous n'avez pas de compte ? ",
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                              text: "S'inscrire",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    InkWell(
+                      onTap: () =>
+                          Navigator.pushNamed(context, AppRoutes.resetPassword),
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Mot de passe oubliée ?",
+                          style: TextStyle(
+                            color: AppPalette.primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),

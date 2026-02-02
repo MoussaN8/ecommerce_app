@@ -1,12 +1,23 @@
+import 'package:ecommerce_app/core/di/injection_container.dart';
 import 'package:ecommerce_app/core/routes/app_routes.dart';
+import 'package:ecommerce_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:ecommerce_app/firebase_options.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ecommerce_app/features/splash/presentation/cubit/splash_cubit.dart';
 import 'package:ecommerce_app/presentation/AppRoot.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await initDependencies(); // initialisation de get It
   runApp(
-    BlocProvider(create: (context) => SplashCubit(), child: const MyApp()),
+    MultiBlocProvider(providers: [
+     BlocProvider(create: (context) => sl<SplashCubit>()),
+     BlocProvider(create: (context)=>sl<AuthBloc>())
+    ],
+     child: const MyApp()),
   );
 }
 
