@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/core/errors/failures.dart';
+import 'package:ecommerce_app/core/myUser/my_user.dart';
 import 'package:ecommerce_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:ecommerce_app/features/auth/domain/entities/user_entity.dart';
 import 'package:ecommerce_app/features/auth/domain/repositories/auth_repository.dart';
@@ -118,6 +119,19 @@ class AuthRepositoryImpl implements AuthRepository {
       // Erreur par défaut
       default:
         return "Une erreur est survenue lors de la connexion. Veuillez réessayer.";
+    }
+  }
+
+  @override
+  Future<Either<Failures, MyUser>> getCurrentUser() async {
+    try {
+      final user = await authRemoteDataSource.getCurrentUser();
+      if(user == null){
+        return left(AuthFailure("user not authenticated"));
+      }
+      return Right(user);
+    } catch (e) {
+      return left(AuthFailure(e.toString()));
     }
   }
 }

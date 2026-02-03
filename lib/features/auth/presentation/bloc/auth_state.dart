@@ -25,4 +25,13 @@ final class AuthFailure extends AuthState {
   List<Object> get props => [message];
 }
 
-final class AuthResetpasswordSuccess extends AuthState{}
+final class AuthResetpasswordSuccess extends AuthState {}
+
+
+
+class AuthAuthenticated extends AuthState {
+  final MyUser user;
+  const AuthAuthenticated(this.user);
+}
+
+class AuthUnauthenticated extends AuthState {}

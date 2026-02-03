@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:ecommerce_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:ecommerce_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:ecommerce_app/features/auth/domain/use_cases/getCurrentUser.dart';
 import 'package:ecommerce_app/features/auth/domain/use_cases/reset_password_use_case.dart';
 import 'package:ecommerce_app/features/auth/domain/use_cases/signIn_use_case.dart';
 import 'package:ecommerce_app/features/auth/domain/use_cases/signUp_use_case.dart';
 import 'package:ecommerce_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:ecommerce_app/features/splash/presentation/cubit/splash_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
@@ -18,7 +18,6 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
 
   // dépendance getIt
-  sl.registerFactory(() => SplashCubit(sl()));
 
   //2 Data Sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
@@ -34,7 +33,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => SignUpUseCase(repository: sl()));
   sl.registerFactory(() => SignInUseCase(repository: sl()));
   sl.registerFactory(() => ResetPasswordUseCase(repository: sl()));
-
+  sl.registerFactory(() => GetCurrentUserUseCase(repository: sl()));
   //5 AuthBloc
 
   sl.registerFactory(
@@ -42,6 +41,7 @@ Future<void> initDependencies() async {
       signUpUseCase: sl(),
       signInUseCase: sl(),
       resetPasswordUseCase: sl(),
+      getCurrentUserUseCase: sl(),
     ),
   );
 }

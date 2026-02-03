@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce_app/core/myUser/my_user.dart';
 import 'package:ecommerce_app/features/auth/data/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -11,6 +12,7 @@ abstract class AuthRemoteDataSource {
   });
   Future<UserModel> signIn({required String email, required String password});
   Future<void> resetPassword({required String email});
+  Future<MyUser?> getCurrentUser();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -94,6 +96,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       rethrow;
     } catch (_) {
       throw Exception("erreur lors de l'envoie de l'email");
+    }
+  }
+
+  //On récupére le token du user
+  @override
+  Future<MyUser?> getCurrentUser() async {
+    try {
+      final firebaseAuth = auth.currentUser;
+      if (firebaseAuth != null) {
+        return MyUser(uid: firebaseAuth.uid, email: firebaseAuth.email ?? '');
+      }
+      return null;
+    } catch (e) {
+      rethrow;
     }
   }
 }

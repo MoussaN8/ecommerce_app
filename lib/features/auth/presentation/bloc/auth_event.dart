@@ -36,3 +36,4 @@ class AuthResetPasswordEvent extends AuthEvent {
   @override
   List<Object> get props => [email];
 }
+class AuthIsUserLoggedIn extends AuthEvent {}
