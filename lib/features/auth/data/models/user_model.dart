@@ -6,6 +6,7 @@ class UserModel extends UserEntity {
     required super.nom,
     required super.prenom,
     required super.email,
+    super.profilePic
   });
 
   // on transforme les données qui proviennent de firabase en un objet dart
@@ -15,11 +16,12 @@ class UserModel extends UserEntity {
       nom: json['nom'] as String? ?? '',
       prenom: json['prenom'] as String? ?? '',
       email: json['email'] as String? ?? '',
+      profilePic:json['profilePic'] as String?,
     );
   }
 
   // lorsqu'on envoie nos données vers fireStore
   Map<String, dynamic> toJson() {
-    return {'uid': uid, 'nom': nom, 'prenom': prenom, 'email': email};
+    return {'uid': uid, 'nom': nom, 'prenom': prenom, 'email': email,'profilePic':profilePic};
   }
 }

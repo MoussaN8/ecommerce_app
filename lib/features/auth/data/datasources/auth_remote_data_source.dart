@@ -40,6 +40,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         nom: nom,
         prenom: prenom,
         email: email,
+        profilePic: null,
       );
 
       // enregistrement des données dans fireStore
@@ -103,13 +104,32 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<MyUser?> getCurrentUser() async {
     try {
-      final firebaseAuth = auth.currentUser;
-      if (firebaseAuth != null) {
-        return MyUser(uid: firebaseAuth.uid, email: firebaseAuth.email ?? '');
+      final firebaseUser = auth.currentUser;
+      if (firebaseUser == null) return null;
+
+      // 🔥 Étape CRITIQUE
+      await firebaseUser.reload();
+
+      final refreshedUser = auth.currentUser;
+      if (refreshedUser == null) return null;
+
+      // 🔐 Sécurité Firestore
+      final doc = await firestore
+          .collection('users')
+          .doc(refreshedUser.uid)
+          .get();
+
+      if (!doc.exists || doc.data() == null) {
+        // user Auth existe mais données Firestore absentes
+        await auth.signOut();
+        return null;
       }
-      return null;
+
+      return MyUser.fromMap(doc.data()!);
     } catch (e) {
-      rethrow;
+      // token invalide / user supprimé
+      await auth.signOut();
+      return null;
     }
   }
 }

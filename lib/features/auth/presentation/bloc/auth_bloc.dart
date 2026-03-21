@@ -1,4 +1,5 @@
-import 'package:bloc/bloc.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ecommerce_app/core/errors/failures.dart';
 import 'package:ecommerce_app/core/myUser/my_user.dart';
 import 'package:ecommerce_app/features/auth/domain/entities/user_entity.dart';
@@ -93,6 +94,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
+    // On crée un futur qui attend 2 ou 3 secondes
+    await Future.delayed(const Duration(seconds: 2));
     final user = await _getCurrentUserUseCase();
     user.fold(
       (_) => emit(AuthUnauthenticated()),

@@ -1,3 +1,4 @@
+
 import 'package:ecommerce_app/core/errors/failures.dart';
 import 'package:ecommerce_app/core/myUser/my_user.dart';
 import 'package:ecommerce_app/features/auth/data/datasources/auth_remote_data_source.dart';
@@ -15,6 +16,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String prenom,
     required String email,
     required String password,
+    
   }) async {
     try {
       final response = await authRemoteDataSource.signUpWithEmailAndPassword(
@@ -22,6 +24,7 @@ class AuthRepositoryImpl implements AuthRepository {
         prenom: prenom,
         email: email,
         password: password,
+        
       );
       return right(response);
     } on FirebaseAuthException catch (e) {
@@ -129,6 +132,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if(user == null){
         return left(AuthFailure("user not authenticated"));
       }
+      
       return Right(user);
     } catch (e) {
       return left(AuthFailure(e.toString()));

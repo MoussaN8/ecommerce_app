@@ -1,3 +1,4 @@
+
 import 'package:ecommerce_app/core/errors/failures.dart';
 import 'package:ecommerce_app/core/myUser/my_user.dart';
 import 'package:ecommerce_app/features/auth/domain/entities/user_entity.dart';
@@ -9,6 +10,7 @@ abstract class AuthRepository {
     required String prenom,
     required String email,
     required String password,
+    
   });
   Future<Either<Failures, UserEntity>> signIn({
     required String email,

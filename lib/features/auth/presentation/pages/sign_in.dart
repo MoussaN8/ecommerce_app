@@ -43,7 +43,7 @@ class _SignInState extends State<SignIn> {
               if (state is AuthSuccess) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  AppRoutes.shop,
+                  AppRoutes.homePage,
                   (route) => false,
                 );
               }

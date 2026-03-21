@@ -49,7 +49,7 @@ class _SignUpState extends State<SignUp> {
                 showSnackBar(context, "Compte créé avec succés !");
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  AppRoutes.shop,
+                  AppRoutes.homePage,
                   (route) => false,
                 );
               }
