@@ -37,9 +37,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // création du compte dans firebase store
       final userModel = UserModel(
         uid: user.uid,
-        nom: nom,
-        prenom: prenom,
-        email: email,
+        nom: nom.trim(),
+        prenom: prenom.trim(),
+        email: email.trim(),
         profilePic: null,
       );
 
@@ -52,8 +52,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return userModel;
     } on FirebaseAuthException {
       rethrow;
-    } catch (_) {
-      throw Exception("Une erreur inconnue est survenue");
+    } on FirebaseException {
+      throw Exception("Erreur lors de l'enregistrement dans Firestore");
+    } catch (e) {
+      throw Exception("Erreur technique: $e");
     }
   }
 
@@ -64,28 +66,33 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
-      final response = await auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+      final credential = await auth.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
       );
-      if (response.user == null) {
+
+      final firebaseUser = credential.user;
+      if (firebaseUser == null) {
         throw Exception("Utilisateur introuvable !");
       }
-      // récupération des infos du user via fireStore
-      final userData = await firestore
+
+      final userDoc = await firestore
           .collection('users')
-          .doc(response.user!.uid)
+          .doc(firebaseUser.uid)
           .get();
 
-      if (userData.data() == null) {
-        throw Exception("les données n'existent pas dans la base de données");
+      if (!userDoc.exists || userDoc.data() == null) {
+        throw Exception("Données utilisateur introuvables dans Firestore");
       }
 
-      return UserModel.fromJson(userData.data()!);
+      return UserModel.fromJson(userDoc.data()!);
     } on FirebaseAuthException {
       rethrow;
-    } catch (_) {
-      throw Exception("Une erreur inconnue est survenue");
+    } on FirebaseException {
+      // erreur Firestore
+      throw Exception("Erreur base de données");
+    } catch (e) {
+      throw Exception("Erreur technique: $e");
     }
   }
 

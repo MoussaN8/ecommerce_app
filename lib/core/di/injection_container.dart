@@ -12,6 +12,11 @@ import 'package:ecommerce_app/features/category/Data/Repository/category_reposit
 import 'package:ecommerce_app/features/category/Domain/repository/category_repository.dart';
 import 'package:ecommerce_app/features/category/Domain/use-cases/category_use_cases.dart';
 import 'package:ecommerce_app/features/category/Presentation/bloc/category_bloc.dart';
+import 'package:ecommerce_app/features/produits/data/datasources/produit_data_source.dart';
+import 'package:ecommerce_app/features/produits/data/repositories/produit_repository_impl.dart';
+import 'package:ecommerce_app/features/produits/domain/repositories/produit_repository.dart';
+import 'package:ecommerce_app/features/produits/domain/use-cases/produit_use_case.dart';
+import 'package:ecommerce_app/features/produits/presentation/bloc/produit_bloc.dart';
 import 'package:ecommerce_app/features/profilPicture/data/data_source/profil_picture_data_source.dart';
 import 'package:ecommerce_app/features/profilPicture/data/repositories/profil_repository_impl.dart';
 import 'package:ecommerce_app/features/profilPicture/domain/repositories/profil_repository.dart';
@@ -26,9 +31,10 @@ import 'package:get_it/get_it.dart';
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
-  // Services externes Firebase
-  sl.registerLazySingleton(() => FirebaseAuth.instance);
-  sl.registerLazySingleton(() => FirebaseFirestore.instance);
+  // Firebase
+  sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+
+  sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
 
   // dépendance getIt
 
@@ -42,6 +48,9 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<CategoryDataSource>(
     () => CategoryDataSourceImpl(firestore: sl()),
   );
+  sl.registerLazySingleton<ProduitDataSource>(
+    () => ProduitDataSourceImpl(firestore: sl()),
+  );
 
   //3 repositories
   sl.registerLazySingleton<AuthRepository>(
@@ -52,6 +61,9 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<CategoryRepository>(
     () => CategoryRepositoryImpl(categoryDataSource: sl()),
+  );
+  sl.registerLazySingleton<ProduitRepository>(
+    () => ProduitRepositoryImpl(produitDataSource: sl()),
   );
 
   //4 useCases
@@ -64,6 +76,9 @@ Future<void> initDependencies() async {
   sl.registerFactory(() => RemoveProfileImageUsecase(repository: sl()));
   sl.registerFactory(() => ChangeProfileImageUsecase(repository: sl()));
   sl.registerFactory(() => CategoryUseCases(repository: sl()));
+  sl.registerFactory<ProduitUseCase>(
+    () => ProduitUseCase(produitRepository: sl()),
+  );
 
   //5 AuthBloc
   sl.registerFactory(
@@ -75,6 +90,7 @@ Future<void> initDependencies() async {
     ),
   );
   sl.registerFactory(() => CategoryBloc(categoryUseCases: sl()));
+  sl.registerFactory<ProduitBloc>(() => ProduitBloc(produitUseCase: sl()));
 
   //cubit
   sl.registerFactory(

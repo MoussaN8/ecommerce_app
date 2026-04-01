@@ -1,10 +1,10 @@
-
 import 'package:ecommerce_app/core/errors/failures.dart';
 import 'package:ecommerce_app/core/myUser/my_user.dart';
 import 'package:ecommerce_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:ecommerce_app/features/auth/domain/entities/user_entity.dart';
 import 'package:ecommerce_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -16,7 +16,6 @@ class AuthRepositoryImpl implements AuthRepository {
     required String prenom,
     required String email,
     required String password,
-    
   }) async {
     try {
       final response = await authRemoteDataSource.signUpWithEmailAndPassword(
@@ -24,13 +23,16 @@ class AuthRepositoryImpl implements AuthRepository {
         prenom: prenom,
         email: email,
         password: password,
-        
       );
       return right(response);
     } on FirebaseAuthException catch (e) {
       return left(AuthFailure(_mapFirebaseError(e.code)));
-    } catch (_) {
-      return const Left(AuthFailure("erreur inconnue"));
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print("SIGNUP ERREUR : $e");
+        print("STACKTRACE : $stackTrace");
+      }
+      return Left(AuthFailure("Erreur inconnue: ${e.toString()}"));
     }
   }
 
@@ -60,11 +62,18 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       return right(response);
     } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print("Code d'erreur: ${e.code}"); // Très important pour le debug
+        print("Message: ${e.message}");
+      }
+
       return left(AuthFailure(mapFirebaseSignInError(e.code)));
-    } catch (_) {
-      throw Exception(
-        "Une erreur inconnue est survenue lors de la connexion !",
-      );
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print("ERREUR CAPTURÉE : $e");
+        print("STACKTRACE : $stackTrace");
+      }
+      throw Exception("Erreur interne : ${e.toString()}");
     }
   }
 
@@ -129,10 +138,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failures, MyUser>> getCurrentUser() async {
     try {
       final user = await authRemoteDataSource.getCurrentUser();
-      if(user == null){
+      if (user == null) {
         return left(AuthFailure("user not authenticated"));
       }
-      
+
       return Right(user);
     } catch (e) {
       return left(AuthFailure(e.toString()));
