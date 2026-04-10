@@ -210,6 +210,37 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ),
 
+                      // SECTION Sneakers
+                      ProductList(
+                        titre: "Sneakers",
+                        produits: state.sneakersProduits,
+                        onVoirTout: () => _navigateToCategory(
+                          context,
+                          "Sneakers",
+                          state.sneakersProduits,
+                        ),
+                      ),
+
+                      ProductList(
+                        titre: "Costume Africain",
+                        produits: state.costumeProduits,
+                        onVoirTout: () => _navigateToCategory(
+                          context,
+                          "Costume Africain",
+                          state.costumeProduits,
+                        ),
+                      ),
+
+                      ProductList(
+                        titre: "Lacoste",
+                        produits: state.lacosteProduits,
+                        onVoirTout: () => _navigateToCategory(
+                          context,
+                          "Lacoste",
+                          state.lacosteProduits,
+                        ),
+                      ),
+
                       const SizedBox(height: 50), // Petit espace en bas
                     ],
                   );

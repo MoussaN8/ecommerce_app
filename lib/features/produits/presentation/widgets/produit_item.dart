@@ -26,7 +26,11 @@ class _ProduitItemState extends State<ProduitItem> {
           onTapUp: (_) => setState(() => _scale = 1.0), // Retour à la normale
           onTapCancel: () => setState(() => _scale = 1.0),
           onTap: () {
-            Navigator.pushNamed(context, AppRoutes.categoryProduitPage);
+            Navigator.pushNamed(
+              context,
+              AppRoutes.produitView,
+              arguments: widget.produit,
+            );
           },
           child: Column(
             children: [
