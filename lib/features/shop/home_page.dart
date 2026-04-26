@@ -145,8 +145,9 @@ class _HomepageState extends State<Homepage> {
             Expanded(
               child: BlocBuilder<ProduitBloc, ProduitState>(
                 builder: (context, state) {
-                  if (state.isLoading)
+                  if (state.isLoading) {
                     return const Center(child: CircularProgressIndicator());
+                  }
 
                   // Filtrage en temps réel pour la recherche
                   final filteredProduits = state.tousLesProduits

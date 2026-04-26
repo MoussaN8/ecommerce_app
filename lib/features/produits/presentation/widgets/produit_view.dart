@@ -1,17 +1,21 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecommerce_app/core/routes/app_routes.dart';
 import 'package:ecommerce_app/core/theme/app_palette.dart';
 import 'package:ecommerce_app/features/produits/domain/entities/produit_entity.dart';
+import 'package:ecommerce_app/features/produits/presentation/providers/cart_provider.dart';
+import 'package:ecommerce_app/features/produits/presentation/widgets/cart_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProduitView extends StatefulWidget {
+class ProduitView extends ConsumerStatefulWidget {
   final ProduitEntity produit;
   const ProduitView({super.key, required this.produit});
 
   @override
-  State<ProduitView> createState() => _ProduitViewState();
+  ConsumerState<ProduitView> createState() => _ProduitViewState();
 }
 
-class _ProduitViewState extends State<ProduitView> {
+class _ProduitViewState extends ConsumerState<ProduitView> {
   String selectedSize = 'M';
   @override
   Widget build(BuildContext context) {
@@ -81,7 +85,19 @@ class _ProduitViewState extends State<ProduitView> {
                   backgroundColor: AppPalette.primaryColor,
                   minimumSize: Size(double.infinity, 50),
                 ),
-                onPressed: () {},
+                // AJOUTER AU PANIER VIA RIVERPOD
+                // On passe l'entité ET la taille sélectionnée
+                onPressed: () {
+                  final itemAuPanier = CartItem(
+                    produit: widget.produit,
+                    selectedSize: selectedSize,
+                  );
+                  ref
+                      .read(cartProvider.notifier)
+                      .ajouterProduit(itemAuPanier);
+                  // 2. NAVIGUER VERS LE PANIER
+                  Navigator.pushNamed(context, AppRoutes.cart);
+                },
                 child: Row(
                   mainAxisSize:
                       MainAxisSize.min, // important pour centrer le contenu

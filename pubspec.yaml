@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_bloc: ^9.1.1
   equatable: ^2.0.8
-  shared_preferences: ^2.5.4
+  shared_preferences: ^2.5.5
   bloc_provider: ^1.0.0
   firebase_auth: ^6.1.4
   firebase_core: ^4.4.0
@@ -48,6 +48,7 @@ dependencies:
   cached_network_image: ^3.4.1
   http: ^1.6.0
   carousel_slider: ^5.1.2
+  flutter_riverpod: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,7 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/emailSend.png
+    - assets/images/cartImage.png
  
 
   # An image asset can refer to one or more resolution-specific "variants", see
