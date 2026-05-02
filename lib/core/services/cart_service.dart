@@ -21,7 +21,7 @@ class CartService {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? cartJson = prefs.getStringList(_cartKey);
     if (cartJson == null) return [];
-    // on transforme chaque string json en obket produitEntity
+    // on transforme chaque string json en objet produitEntity
     return cartJson
         .map((item) => CartItem.fromMap(jsonDecode((item))))
         .toList();

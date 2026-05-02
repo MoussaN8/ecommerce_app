@@ -6,6 +6,17 @@ final cartProvider = AsyncNotifierProvider<CartNotifier, List<CartItem>>(
   CartNotifier.new,
 );
 
+// pour afficher le prix total des produits
+final cartTotalprovider = Provider<int>((ref) {
+  // on surveille l'état du panier
+  final cartAsync = ref.watch(cartProvider);
+
+  return cartAsync.maybeWhen(
+    data: (items) => items.fold(0, (som, item) => som + item.produit.prix),
+    orElse: () => 0,
+  );
+});
+
 class CartNotifier extends AsyncNotifier<List<CartItem>> {
   @override
   //on récupère le panier via cart service
@@ -45,5 +56,14 @@ class CartNotifier extends AsyncNotifier<List<CartItem>> {
     } catch (e, st) {
       state = AsyncError(e, st);
     }
+  }
+
+  Future<void> viderToutLePanier() async {
+    // 1. On vide le stockage physique
+    await CartService.clearCart();
+
+    // 2. On met à jour l'état de Riverpod avec une liste vide
+    // Cela va déclencher instantanément le passage à l'écran "_buildEmptyState"
+    state = const AsyncData([]);
   }
 }

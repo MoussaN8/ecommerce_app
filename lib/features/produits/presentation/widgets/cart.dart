@@ -13,6 +13,8 @@ class Cart extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // On écoute le cartProvider
     final cartAsync = ref.watch(cartProvider);
+    // on écoute le provider  du prix total
+    final prixTotal = ref.watch(cartTotalprovider);
     return Scaffold(
       appBar: AppBar(title: Text('Panier')),
       // On utilise .when pour gérer les états asynchrones
@@ -26,6 +28,12 @@ class Cart extends ConsumerWidget {
         error: (e, _) => Center(child: Text(e.toString())),
         loading: () =>
             const Center(child: CircularProgressIndicator.adaptive()),
+      ),
+      // ajout de la barre pour voir le prix total
+      bottomNavigationBar: cartAsync.maybeWhen(
+        data: (items) =>
+            items.isEmpty ? null : _buildCheckhoutSection(prixTotal, context),
+        orElse: () => null,
       ),
     );
   }
@@ -72,7 +80,10 @@ class Cart extends ConsumerWidget {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () {}, // Logique pour vider le panier
+              onPressed: () async {
+                // On appelle le notifier, pas le service directement
+                ref.read(cartProvider.notifier).viderToutLePanier();
+              }, // Logique pour vider le panier
               child: const Text(
                 "Vider le panier",
                 style: TextStyle(
@@ -178,6 +189,51 @@ class Cart extends ConsumerWidget {
             icon: const Icon(Icons.delete, color: Colors.red),
             onPressed: () =>
                 ref.read(cartProvider.notifier).supprimerProduit(index),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // widget prix total
+  Widget _buildCheckhoutSection(int total, BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Total : $total FCFA",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppPalette.primaryColor,
+              minimumSize: const Size(double.infinity, 65),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadiusGeometry.circular(12),
+              ),
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.checkoutPage);
+            },
+            child: const Text(
+              "Commander",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),

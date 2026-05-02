@@ -16,7 +16,9 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initDependencies();
 
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(
+    ProviderScope(child: const MyApp()),
+  ); // providerScope gére les états de mes produits dans le cart
 }
 
 class MyApp extends StatelessWidget {

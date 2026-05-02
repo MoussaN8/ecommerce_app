@@ -4,8 +4,8 @@ import 'package:ecommerce_app/features/auth/presentation/pages/sign_up.dart';
 import 'package:ecommerce_app/features/produits/domain/entities/produit_entity.dart';
 import 'package:ecommerce_app/features/produits/presentation/widgets/cart.dart';
 import 'package:ecommerce_app/features/produits/presentation/widgets/category_produit.dart';
+import 'package:ecommerce_app/features/produits/presentation/widgets/checkout_page.dart';
 import 'package:ecommerce_app/features/produits/presentation/widgets/produit_view.dart';
-import 'package:ecommerce_app/features/shop/home_page.dart';
 import 'package:ecommerce_app/navigation_page.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +19,7 @@ class AppRoutes {
   static const String produitView = '/produitView';
   static const String cart = '/cart';
   static const String bottomBar = '/bottomBar';
+  static const String checkoutPage = '/checkoutPage';
 
   // on sépare les routes statiques dess routes avec arguments
 
@@ -29,6 +30,7 @@ class AppRoutes {
     homePage: (context) => const NavigationPage(),
     cart: (context) => const Cart(),
     bottomBar: (context) => const NavigationPage(),
+    checkoutPage:(context)=>const CheckoutPage()
   };
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
